@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Prediction System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+    
+    <header class="overview-header">
+        <h1>AI Disease Predictor</h1>
+        <p>This diagnostic tool is powered by a machine learning Random Forest Classifier. Select up to 5 symptoms below, and our AI will analyze the symptom severity weights to predict the most likely disease.</p>
+    </header>
+
+    <div class="card">
+        <form action="/predict" method="POST">
+            {% for i in range(1, 6) %}
+            <div class="form-group">
+                <label for="symptom{{ i }}">Symptom {{ i }}:</label>
+                <select name="symptom{{ i }}" id="symptom{{ i }}">
+                    <option value="">-- Select a Symptom --</option>
+                    
+                    {% for sym in symptoms %}
+                    <!-- If the symptom matches the one saved in user_choices, mark it as 'selected' -->
+                    <option value="{{ sym }}" {% if user_choices and user_choices[i] == sym %}selected{% endif %}>
+                        {{ sym.replace('_', ' ').title() }}
+                    </option>
+                    {% endfor %}
+                    
+                </select>
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-submit">Analyze Symptoms</button>
+        </form>
+
+        {% if prediction_text %}
+        <div class="result-box">
+            <h3>Predicted Diagnosis:</h3>
+            <p class="diagnosis">{{ prediction_text.split(': ')[1] if ': ' in prediction_text else prediction_text }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>
